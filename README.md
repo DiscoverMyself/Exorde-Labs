@@ -8,6 +8,8 @@
 
 
 # Official Link
+
+### [WEB](https://exorde.network/)
 ### [TWITTER](https://twitter.com/ExordeLabs)
 ### [DISCORD](https://discord.gg/exordelabs)
 
