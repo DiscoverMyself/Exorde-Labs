@@ -97,7 +97,7 @@ screen -S exorde
 ```
 docker run -it exorde-cli -m [your_address] -l 2
 ```
-*change: [your_address] with your metamask address (0x...)
+*change: [your_address] with your metamask address (0x...)*
 
 
 
