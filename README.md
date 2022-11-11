@@ -62,7 +62,43 @@ screen -Rd exorde
 **wait till validation success, and all file uploaded**
 ![exorde4](https://user-images.githubusercontent.com/78480857/200719727-3cb73159-cfa3-4fd6-9be8-eb9fe0fd3c3c.png)
 
+
+
+
+
+# ! UPDATE !
+
+## Quit Screen
+```
+screen -ls
+screen -X -S [xxx.exorde] quit
+```
+([xxx.exorde] diisi sesuai output dari ```screen -ls``` tadi)
+
+
+## Edit localConfig.json - last version 1.3.1 ganti 1.3.2
+```
+cd ExordeModuleCLI
+nano localConfig.json
+```
+
+## Re-build Docker
+```
+docker build -t exorde-cli .
+```
+wait till build success
+
+## Open Screen
+```
+screen -S exorde
+```
+
+## Start Docker
+```
+docker run -it exorde-cli -m [your_address] -l 2
+```
+*change: [your_address] with your metamask address (0x...)
+
+
+
 all set!
-
-
-
