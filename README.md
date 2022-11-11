@@ -76,7 +76,7 @@ screen -X -S [xxx.exorde] quit
 ([xxx.exorde] diisi sesuai output dari ```screen -ls``` tadi)
 
 
-## Edit localConfig.json - last version 1.3.1 ganti 1.3.2
+## Edit localConfig.json - last version 1.3.1 to 1.3.2
 ```
 cd ExordeModuleCLI
 nano localConfig.json
