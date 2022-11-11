@@ -13,7 +13,7 @@
 ### [TWITTER](https://twitter.com/ExordeLabs)
 ### [DISCORD](https://discord.gg/exordelabs)
 
-# **1. Installasi**
+# **1. Installation**
  ## Using Docker
   
 **Install Docker**
