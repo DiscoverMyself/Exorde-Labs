@@ -93,8 +93,12 @@ https://explorer.exorde.network/
 ```
 
 Restart 
-```bash
-  DOCKER_ID={docker ps -aqf "name=Exorde"}
+```
+DOCKER_ID=$(docker ps -aqf "name=Exorde")
+echo 'export DOCKER_ID='${DOCKER_ID} >> $HOME/.bash_profile
+source $HOME/.bash_profile
+docker restart $DOCKER_ID
+```
 
 To delete node
 
