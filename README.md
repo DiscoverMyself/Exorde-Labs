@@ -7,98 +7,98 @@
 </p>
 
 
-# Official Link
 
-### [WEB](https://exorde.network/)
-### [TWITTER](https://twitter.com/ExordeLabs)
-### [DISCORD](https://discord.gg/exordelabs)
+## Persyaratan Hardware
 
-# **1. Installation**
- ## Using Docker
-  
-**Install Docker**
+- Memory  : 4 GB RAM
+- CPU     : 2 or more physical CPU cores
+- Disk    : -+ 40 GB SSD Storage
+- OS      : Ubuntu 18.04 LTS
+
+## Set Vars
+
+```bash
+  WALLET_ADDRESS=<METAMASK WALLET ADDRESS>
 ```
-sudo apt update -y && sudo apt install apt-transport-https ca-certificates curl software-properties-common -y && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - && sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable" && sudo apt install docker-ce
+Change <METAMASK WALLET ADDRESS> To your Metamask Wallet Address
+
+```bash
+echo export WALLET_ADDRESS=${WALLET_ADDRESS} >> $HOME/.bash_profile
+source ~/.bash_profile
 ```
 
-**Install Screen**
-```
-sudo apt install -y build-essential libssl-dev libffi-dev git curl screen
+## Update Packages and Dependencies
+```bash
+cd $HOME
+sudo apt update && sudo apt upgrade -y
+sudo apt install curl build-essential git wget npm jq make gcc tmux -y && apt purge docker docker-engine docker.io containerd docker-compose -y
 ```
 
-**Clone Repositori**
+## Intsall Docker
+```bash
+rm /usr/bin/docker-compose /usr/local/bin/docker-compose
+curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+systemctl restart docker
+curl -SL https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker --version
 ```
+## Clone Repository
+```bash
 git clone https://github.com/exorde-labs/ExordeModuleCLI.git
-```
-
-**Build Docker**
-```
 cd ExordeModuleCLI
-docker build -t exorde-cli . 
-```
-wait 'till the output: ![exorde](https://user-images.githubusercontent.com/78480857/200719667-d1763911-fbbe-47ad-8cdf-99ccdf362311.png)
-
-# **2. Start Node**
-
-## Open Screen
-```
-screen -S exorde
 ```
 
-## Start Docker
-```
-docker run -it exorde-cli -m [your_address] -l 2
-```
-*change: [your_address] with your metamask address (0x...)
-
-the output should be: ![exorde2](https://user-images.githubusercontent.com/78480857/200719700-0239649f-f8f8-4b57-88a2-7f3516c15c56.png)
-
-you can run it in the background (ctrl + A + D)
-
-if you want to open again using 
-```
-screen -Rd exorde
-```
-**wait till validation success, and all file uploaded**
-![exorde4](https://user-images.githubusercontent.com/78480857/200719727-3cb73159-cfa3-4fd6-9be8-eb9fe0fd3c3c.png)
-
-
-
-
-
-# ! UPDATE !
-
-## Quit Screen
-```
-screen -ls
-screen -X -S [xxx.exorde] quit
-```
-([xxx.exorde] diisi sesuai output dari ```screen -ls``` tadi)
-
-
-## Edit localConfig.json - last version 1.3.1 to 1.3.2
-```
-cd ExordeModuleCLI
-nano localConfig.json
-```
-
-## Re-build Docker
-```
+```bash
 docker build -t exorde-cli .
 ```
-wait till build success
 
-## Open Screen
+## Run Exorder CLI through Docker
+### This runs in the background
+
+```bash
+docker run -d -it --name Exorde exorde-cli -m $WALLET_ADDRESS -l 4
 ```
-screen -S exorde
+
+You can change the logs by changing ``4`` :
+
+0 = no logs
+  
+1 = general logs
+  
+2 = validation logs
+  
+3 = validation + scraping logs
+
+4 = detailed validation + scraping logs (e.g. for troubleshooting)
+
+## Check the logs
+
+Check logs
+
+```bash
+docker logs Exorde
+```
+Check logs constantly
+
+```bash
+docker logs --follow Exorde
+
+```
+Check Explore
+
+```bash
+https://explorer.exorde.network/
 ```
 
-## Start Docker
-```
-docker run -it exorde-cli -m [your_address] -l 2
-```
-*change: [your_address] with your metamask address (0x...)*
+Restart 
+```bash
+  DOCKER_ID={docker ps -aqf "name=Exorde"}
 
+To delete node
 
-
-all set!
+```bash
+sudo  docker stop Exorde &&  sudo  docker  rm Exorde
+sudo  rm -rf ExordeModuleCLI
+ ```
