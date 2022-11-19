@@ -93,10 +93,16 @@ https://explorer.exorde.network/
 ```
 
 Restart 
+  
+(untuk pertama kali restart)
 ```
 DOCKER_ID=$(docker ps -aqf "name=Exorde")
 echo 'export DOCKER_ID='${DOCKER_ID} >> $HOME/.bash_profile
 source $HOME/.bash_profile
+docker restart $DOCKER_ID
+```
+jika sudah pernah memasukkan command diatas, selanjutnya jika restart lagi cukup dengan command
+```
 docker restart $DOCKER_ID
 ```
 
