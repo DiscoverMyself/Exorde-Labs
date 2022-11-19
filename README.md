@@ -73,7 +73,8 @@ You can change the logs by changing ``4`` :
 
 4 = detailed validation + scraping logs (e.g. for troubleshooting)
 
-## Check the logs
+## Useful commands
+ 
 
 Check logs
 
