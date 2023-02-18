@@ -18,7 +18,7 @@ echo -e "\e[1;32m	     /\   \  /   /        ";
 echo -e "\e[1;32m	       \   \/   /         ";
 echo -e "\e[1;32m	        \___\__/          ";
 echo -e "\e[1;32m	                          ";
-echo -e "\e[1m\e[45m	 R3 by: Aprame        ";
+echo -e "\e[1m;95m		R3 by: Aprame        ";
 echo -e "\e[0m"
 
 # set variables
@@ -192,9 +192,9 @@ EOF
 
 echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCET ====================\e[0m"
 echo ""
-echo -e "\e[1m\e[36mTo check service status : \e[1m\e[35msystemctl status $BINARY\e[0m"
-echo -e "\e[1m\e[33mTo check logs status : \e[1m\e[35mjournalctl -fu dymd -o cat\e[0m"
-echo -e "\e[1m\e[31mTo check Blocks status : \e[1m\e[35m$BINARY status 2>&1 | jq .SyncInfo\e[0m"
+echo -e "\e[1;93mTo check service status : \e[1m\e[35msystemctl status $BINARY\e[0m"
+echo -e "\e[1;91mTo check logs status : \e[1m\e[35mjournalctl -fu dymd -o cat\e[0m"
+echo -e "\e[1;96mTo check Blocks status : \e[1m\e[35m$BINARY status 2>&1 | jq .SyncInfo\e[0m"
 echo ""
 sleep 3
 
