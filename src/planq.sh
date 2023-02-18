@@ -5,20 +5,20 @@ echo "Wait ..."
 sleep 3
 clear
        
-echo -e "\e[1;32m 	                          ";
-echo -e "\e[1;32m 	    _____\    _______     ";
-echo -e "\e[1;32m 	   /      \  |      /\    ";
-echo -e "\e[1;32m 	  /_______/  |_____/  \   ";
-echo -e "\e[1;32m 	 |   \   /        /   /   ";
-echo -e "\e[1;32m 	  \   \         \/   /    ";
-echo -e "\e[1;32m 	   \  /    R3    \__/_    ";
-echo -e "\e[1;32m 	    \/ ____    /\         ";
-echo -e "\e[1;32m 	      /  \    /  \        ";
-echo -e "\e[1;32m 	     /\   \  /   /        ";
-echo -e "\e[1;32m 	       \   \/   /         ";
-echo -e "\e[1;32m 	        \___\__/          ";
-echo -e "\e[1;32m 	                          ";
-echo -e "\e[1m\e[45m  	 R3 by: Aprame        ";
+echo -e "\e[1;32m	                          ";
+echo -e "\e[1;32m	    _____\    _______     ";
+echo -e "\e[1;32m	   /      \  |      /\    ";
+echo -e "\e[1;32m	  /_______/  |_____/  \   ";
+echo -e "\e[1;32m	 |   \   /        /   /   ";
+echo -e "\e[1;32m	  \   \         \/   /    ";
+echo -e "\e[1;32m	   \  /    R3    \__/_    ";
+echo -e "\e[1;32m	    \/ ____    /\         ";
+echo -e "\e[1;32m	      /  \    /  \        ";
+echo -e "\e[1;32m	     /\   \  /   /        ";
+echo -e "\e[1;32m	       \   \/   /         ";
+echo -e "\e[1;32m	        \___\__/          ";
+echo -e "\e[1;32m	                          ";
+echo -e "\e[1;35m	     R3 by: Aprame   \e[0m";
 echo -e "\e[0m"
 
 # set variables
@@ -92,9 +92,11 @@ echo -e "\e[1m\e[32m3. Installing go... \e[0m" && sleep 1
 echo -e "\e[1m\e[32m4. Downloading and building binaries... \e[0m" && sleep 1
 	cd $HOME
 	rm -rf $SOURCE
-	git clone $REPO --branch $VERSION
+	git clone $REPO
 	cd $SOURCE
-	make install
+	git checkout $VERSION
+	make build
+	go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.4.0
 
 	# export GOPATH
 	export PATH=$PATH:$(go env GOPATH)/bin
@@ -109,11 +111,8 @@ echo -e "\e[1m\e[32m5. Install & build cosmovisor... \e[0m"
 	cd $HOME
 
 	mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
-	mv $HOME/go/bin/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
+	mv build/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
 	rm -rf build
-	wget -O $HOME/$FOLDER/$COSMOVISOR/genesis/bin/$BINARY $REPO
-	chmod +x $HOME/$FOLDER/cosmovisor/genesis/bin/*
-	cp $GOPATH/bin/$BINARY ~/$FOLDER/$COSMOVISOR/genesis/bin
 
 	# create app symlinks
 	ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
@@ -121,7 +120,7 @@ echo -e "\e[1m\e[32m5. Install & build cosmovisor... \e[0m"
 
 	# init chain & config app
 	$BINARY config chain-id $CHAIN
-	$BINARY config keyring-backend test
+	$BINARY config keyring-backend file
 	$BINARY config node tcp://localhost:${PORT}657
 	$BINARY init $NODENAME --chain-id $CHAIN
 
@@ -140,7 +139,7 @@ echo -e "\e[1m\e[32m6. Set seeds & persistent peers... \e[0m" && sleep 1
 	curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
 	curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
 
-# Set ports, pruning & snapshots configuration
+# Set custom ports, pruning & snapshots configuration
 echo -e "\e[1m\e[32m7. Set ports, pruning & snapshots configuration ...\e[0m" && sleep 1
 	sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${PORT}658\"%; s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:${PORT}657\"%; s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${PORT}060\"%; s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${PORT}656\"%; s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${PORT}660\"%" $HOME/$FOLDER/config/config.toml
 	sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${PORT}317\"%; s%^address = \":8080\"%address = \":${PORT}080\"%; s%^address = \"0.0.0.0:9090\"%address = \"0.0.0.0:${PORT}090\"%; s%^address = \"0.0.0.0:9091\"%address = \"0.0.0.0:${PORT}091\"%" $HOME/$FOLDER/config/app.toml
@@ -193,9 +192,9 @@ EOF
 
 echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCET ====================\e[0m"
 echo ""
-echo -e "\e[1m\e[36mTo check service status : \e[1m\e[35msystemctl status $BINARY\e[0m"
-echo -e "\e[1m\e[33mTo check logs status : \e[1m\e[35mjournalctl -fu dymd -o cat\e[0m"
-echo -e "\e[1m\e[31mTo check Blocks status : \e[1m\e[35m$BINARY status 2>&1 | jq .SyncInfo\e[0m"
+echo -e "\e[1m\e[36mTo check service status : systemctl status $BINARY\e[0m"
+echo -e "\e[1m\e[33mTo check logs status : journalctl -fu dymd -o cat\e[0m"
+echo -e "\e[1m\e[31mTo check Blocks status : $BINARY status 2>&1 | jq .SyncInfo\e[0m"
 echo ""
 sleep 3
 
