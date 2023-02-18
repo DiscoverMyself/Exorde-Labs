@@ -97,8 +97,14 @@ git checkout $VERSION
 make build
 go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.4.0
 
+	# init chain & config app
+$BINARY config chain-id $CHAIN
+$BINARY config keyring-backend file
+$BINARY config node tcp://localhost:${PORT}657
+$BINARY init $NODENAME --chain-id $CHAIN
+
 	# export GOPATH
-	# export PATH=$PATH:$(go env GOPATH)/bin
+export PATH=$PATH:$(go env GOPATH)/bin
 
 	# install & build cosmovisor
 	echo -e "\e[1m\e[32m5. Install & build cosmovisor... \e[0m"
@@ -119,12 +125,6 @@ cp $GOPATH/bin/$BINARY ~/$FOLDER/$COSMOVISOR/genesis/bin
 	# create app symlinks
 ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
 sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
-
-	# init chain & config app
-$BINARY config chain-id $CHAIN
-$BINARY config keyring-backend file
-$BINARY config node tcp://localhost:${PORT}657
-$BINARY init $NODENAME --chain-id $CHAIN
 
 	# Set seeds & persistent peers
 	# seed and peers providing by: polkachu
