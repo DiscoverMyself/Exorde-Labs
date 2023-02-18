@@ -23,9 +23,10 @@ echo -e "\e[0m"
 
 # set variables
 SOURCE=planq
+WALLET=wallet
 BINARY=planqd
-CHAIN=planq_7070-2
 FOLDER=.planqd
+CHAIN=planq_7070-2
 VERSION=v1.0.3
 DENOM=aplanq
 COSMOVISOR=cosmovisor
@@ -34,18 +35,18 @@ GENESIS=https://snap.nodexcapital.com/planq/genesis.json
 ADDRBOOK=https://snap.nodexcapital.com/planq/addrbook.json
 PORT=44
 
-
 # export to bash profile
 echo "export SOURCE=${SOURCE}" >> $HOME/.bash_profile
+echo "export WALLET=${WALLET}" >> $HOME/.bash_profile
 echo "export BINARY=${BINARY}" >> $HOME/.bash_profile
-echo "export DENOM=${DENOM}" >> $HOME/.bash_profile
 echo "export CHAIN=${CHAIN}" >> $HOME/.bash_profile
 echo "export FOLDER=${FOLDER}" >> $HOME/.bash_profile
+echo "export DENOM=${DENOM}" >> $HOME/.bash_profile
 echo "export VERSION=${VERSION}" >> $HOME/.bash_profile
-echo "export COSMOVISOR=${COSMOVISOR}" >> $HOME/.bash_profile
 echo "export REPO=${REPO}" >> $HOME/.bash_profile
+echo "export COSMOVISOR=${COSMOVISOR}" >> $HOME/.bash_profile
 echo "export GENESIS=${GENESIS}" >> $HOME/.bash_profile
-# echo "export ADDRBOOK=${ADDRBOOK}" >> $HOME/.bash_profile
+echo "export ADDRBOOK=${ADDRBOOK}" >> $HOME/.bash_profile
 echo "export PORT=${PORT}" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 
@@ -72,13 +73,11 @@ echo -e "Your Custom port: \e[1m\e[32m$PORT\e[0m"
 echo '================================================='
 sleep 2
 
-	# update packages
-	echo -e "\e[1m\e[32m1. Updating packages... \e[0m" && sleep 1
-sudo apt update && sudo apt upgrade -y
-
 	# Installing dependencies
-	echo -e "\e[1m\e[32m2. Installing dependencies... \e[0m" && sleep 1
-sudo apt install curl build-essential git wget jq make gcc tmux chrony lz4 -y
+	echo -e "\e[1m\e[32m1. Updating packages... \e[0m" && sleep 1
+sudo apt -q update
+sudo apt -qy install curl git jq lz4 build-essential gcc tmux chrony wget make
+sudo apt -qy upgrade
 
 	# install go
 	echo -e "\e[1m\e[32m3. Installing go... \e[0m" && sleep 1
@@ -96,12 +95,6 @@ cd $SOURCE
 git checkout $VERSION
 make build
 go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.4.0
-
-	# init chain & config app
-$BINARY config chain-id $CHAIN
-$BINARY config keyring-backend file
-$BINARY config node tcp://localhost:${PORT}657
-$BINARY init $NODENAME --chain-id $CHAIN
 
 	# export GOPATH
 	#export PATH=$PATH:$(go env GOPATH)/bin
@@ -126,6 +119,12 @@ cp $GOPATH/bin/$BINARY ~/$FOLDER/$COSMOVISOR/genesis/bin
 ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
 sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
 
+	# Init config & chain
+$BINARY config chain-id $CHAIN
+$BINARY config keyring-backend file
+$BINARY config node tcp://localhost:${PORT}657
+$BINARY init $NODENAME --chain-id $CHAIN
+
 	# Set seeds & persistent peers
 	# seed and peers providing by: polkachu
 	echo -e "\e[1m\e[32m6. Set seeds & persistent peers... \e[0m" && sleep 1
@@ -133,9 +132,13 @@ sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
 # external_address=$(wget -qO- eth0.me)
 # sed -i.bak -e "s/^external_address *=.*/external_address = \"$external_address:26656\"/" $HOME/$FOLDER/config/config.toml
 # # PEERS="8a19aa6e874ed5720aad2e7d02567ec932d92d22@141.94.248.63:26656,444b80ce750976df59b88ac2e08d720e1dbbf230@68.183.75.239:26666,20b4f9207cdc9d0310399f848f057621f7251846@222.106.187.13:40606,7ef67269c8ec37ff8a538a5ae83ca670fd2da686@137.184.192.123:26656,19afe579cc0a2b38ca87143f779f45e9a7f18a2f@18.134.191.148:26656,a23f002bda10cb90fa441a9f2435802b35164441@38.146.3.203:18256,bba6e85e3d1f1d9c127324e71a982ddd86af9a99@88.99.3.158:18256,966acc999443bae0857604a9fce426b5e09a7409@65.108.105.48:18256 ,177144bed1e280a6f2435d253441e3e4f1699c6d@65.109.85.226:8090,769ebaa9942375e70cebc21a75a2cfda41049d99@135.181.210.186:26656,8937bdacf1f0c8b2d1ffb4606554eaf08bd55df4@5.75.255.107:26656,99a0695a7358fa520e6fcd46f91492f7cf205d4d@34.175.159.249:26656,47401f4ac3f934afad079ddbe4733e66b58b67da@34.175.244.202:26656"
-SEEDS=$(curl -sL https://raw.githubusercontent.com/planq-network/networks/main/mainnet/seeds.txt | awk '{print $1}' | paste -s -d, -)
+#SEEDS=$(curl -sL https://raw.githubusercontent.com/planq-network/networks/main/mainnet/seeds.txt | awk '{print $1}' | paste -s -d, -)
 # sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$PEERS\"|" $HOME/$FOLDER/config/config.toml
+#sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
+
+SEEDS=$(curl -sL https://raw.githubusercontent.com/planq-network/networks/main/mainnet/seeds.txt | awk '{print $1}' | paste -s -d, -)
 sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
+
 
 	# Download genesis file & addrbook
 curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
