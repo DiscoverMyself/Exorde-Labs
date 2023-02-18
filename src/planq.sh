@@ -23,7 +23,7 @@ echo -e "\e[0m"
 
 # set variables
 SOURCE=planq
-BINARY=planqd 
+BINARY=planqd
 CHAIN=planq_7070-2
 FOLDER=.planqd
 VERSION=v1.0.3
