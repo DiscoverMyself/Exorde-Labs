@@ -104,7 +104,7 @@ $BINARY config node tcp://localhost:${PORT}657
 $BINARY init $NODENAME --chain-id $CHAIN
 
 	# export GOPATH
-export PATH=$PATH:$(go env GOPATH)/bin
+	#export PATH=$PATH:$(go env GOPATH)/bin
 
 	# install & build cosmovisor
 	echo -e "\e[1m\e[32m5. Install & build cosmovisor... \e[0m"
