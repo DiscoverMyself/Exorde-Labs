@@ -65,12 +65,12 @@ fi
 echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile
 source ~/.bash_profile
 
-echo '========================================================='
+echo '================================================='
 echo -e "Your node name: \e[1m\e[32m$NODENAME\e[0m"
 echo -e "Your wallet name: \e[1m\e[32m$WALLET\e[0m"
 echo -e "Your chain name: \e[1m\e[32m$CHAIN\e[0m"
 echo -e "Your Custom port: \e[1m\e[32m$PORT\e[0m"
-echo '========================================================='
+echo '================================================='
 sleep 2
 
 # update packages
