@@ -18,7 +18,7 @@ echo -e "\e[1;32m	     /\   \  /   /        ";
 echo -e "\e[1;32m	       \   \/   /         ";
 echo -e "\e[1;32m	        \___\__/          ";
 echo -e "\e[1;32m	                          ";
-echo -e "\e[1m;95m		R3 by: Aprame        ";
+echo -e "\e[1;95m		R3 by: Aprame        ";
 echo -e "\e[0m"
 
 # set variables
