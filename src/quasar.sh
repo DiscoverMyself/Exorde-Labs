@@ -32,7 +32,7 @@ COSMOVISOR=cosmovisor
 REPO=https://github.com/quasar-finance/binary-release/raw/main/v0.0.2-alpha-11/quasarnoded-linux-amd64
 GENESIS=https://raw.githubusercontent.com/DiscoverMyself/sebuah-tutorial/main/Testnet/Quasar/genesis.json
 ADDRBOOK=https://raw.githubusercontent.com/DiscoverMyself/sebuah-tutorial/main/Testnet/Quasar/addrbook.json
-PORT=54
+PORT=53
 
 
 # export to bash profile
