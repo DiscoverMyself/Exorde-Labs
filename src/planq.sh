@@ -64,12 +64,12 @@ fi
 echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile
 source ~/.bash_profile
 
-echo '========================================================='
+echo '================================================='
 echo -e "Your node name: \e[1m\e[32m$NODENAME\e[0m"
 echo -e "Your wallet name: \e[1m\e[32m$WALLET\e[0m"
 echo -e "Your chain name: \e[1m\e[32m$CHAIN\e[0m"
 echo -e "Your Custom port: \e[1m\e[32m$PORT\e[0m"
-echo '========================================================='
+echo '================================================='
 sleep 2
 
 	# update packages
@@ -98,7 +98,7 @@ make build
 go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.4.0
 
 	# export GOPATH
-	export PATH=$PATH:$(go env GOPATH)/bin
+	# export PATH=$PATH:$(go env GOPATH)/bin
 
 	# install & build cosmovisor
 	echo -e "\e[1m\e[32m5. Install & build cosmovisor... \e[0m"
@@ -110,8 +110,11 @@ cp cosmovisor/cosmovisor $GOPATH/bin/cosmovisor
 cd $HOME
 
 mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
-mv build/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
+mv $HOME/go/bin/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
 rm -rf build
+wget -O $HOME/$FOLDER/$COSMOVISOR/genesis/bin/$BINARY $REPO
+chmod +x $HOME/$FOLDER/cosmovisor/genesis/bin/*
+cp $GOPATH/bin/$BINARY ~/$FOLDER/$COSMOVISOR/genesis/bin
 
 	# create app symlinks
 ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
