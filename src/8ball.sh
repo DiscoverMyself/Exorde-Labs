@@ -196,8 +196,8 @@ sudo systemctl start $BINARY
 
 echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET ========================\e[0m"
 echo ""
-echo -e "\e[1m\e[36mTo check service status : systemctl status $BINARY\e[0m"
-echo -e "\e[1m\e[33mTo check logs status : journalctl -fu $BINARY -o cat\e[0m"
-echo -e "\e[1m\e[31mTo check Blocks status : $BINARY status 2>&1 | jq .SyncInfo\e[0m"
+echo -e "To check service status : \e[1m\e[36msystemctl status $BINARY\e[0m"
+echo -e "\e[1m\e[33mTo check logs status : \e[1m\e[33mjournalctl -fu $BINARY -o cat\e[0m"
+echo -e "To check Blocks status : \e[1m\e[31mcurl -s localhost:${PORT}657/status | jq .result.sync_info\e[0m"
 echo " "
 sleep 2
