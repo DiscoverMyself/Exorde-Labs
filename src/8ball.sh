@@ -170,26 +170,23 @@ s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/$FOLDER/co
 
 	# Create Service
 	echo -e "\e[1m\e[32m8. Creating service files... \e[0m" && sleep 1
-sudo tee /etc/systemd/system/$BINARY.service > /dev/null << EOF
+sudo tee /etc/systemd/system/$BINARY.service > /dev/null <<EOF
 [Unit]
 Description=$BINARY
 After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which cosmovisor) run start
+ExecStart=$(which $BINARY) start
 Restart=on-failure
-RestartSec=10
-LimitNOFILE=65535
-Environment="DAEMON_HOME=$HOME/$FOLDER"
-Environment="DAEMON_NAME=$BINARY"
-Environment="UNSAFE_SKIP_BACKUP=true"
+RestartSec=3
+LimitNOFILE=4096
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Start Service
+# Register And Start Service
 sudo systemctl daemon-reload
 sudo systemctl enable $BINARY
 sudo systemctl start $BINARY
