@@ -114,6 +114,14 @@ $BINARY config keyring-backend test
 $BINARY config node tcp://localhost:${PORT}657
 $BINARY init $NODENAME --chain-id $CHAIN
 
+cd ~/arkh-blockchain/binary 
+tar -xzvf binary.tar.gz
+export PATH=$PATH:/workspace/arkh-blockchain/binary
+
+cd
+arkhd init validator
+cp arkh-blockchain/genesis/genesis.json .arkh/config
+
     # Set peers and seeds
     echo -e "\e[1m\e[32m7. Set seeds & persistent peers... \e[0m" && sleep 1
 PEERS="808f01d4a7507bf7478027a08d95c575e1b5fa3c@asc-dataseed.arkhadian.com:26656"
@@ -154,7 +162,7 @@ After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which cosmovisor) run start
+ExecStart=$(which $BINARY) start
 Restart=on-failure
 RestartSec=10
 LimitNOFILE=65535
