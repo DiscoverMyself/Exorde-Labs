@@ -92,24 +92,20 @@ rm -rf $SOURCE
 git clone $REPO
 cd $SOURCE
 git checkout #$VERSION
-make build
+# make build
 go install ./...
 go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.4.0
 
-cd ~/arkh-blockchain/binary 
-tar -xzvf binary.tar.gz
-export PATH=$PATH:/workspace/arkh-blockchain/binary
-
 	# install & build cosmovisor
 	echo -e "\e[1m\e[32m4. Install & build cosmovisor... \e[0m"
-mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
-mv target/release/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
-rm -rf build
+# mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
+# mv target/release/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
+# rm -rf build
 
     # Create application symlinks
 	echo -e "\e[1m\e[32m5. Create App symlinks... \e[0m"
-ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
-sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
+# ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
+# sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
 
     # Init generation
     echo -e "\e[1m\e[32m6. Init config & Chain... \e[0m"
@@ -118,6 +114,13 @@ $BINARY config keyring-backend test
 $BINARY config node tcp://localhost:${PORT}657
 $BINARY init $NODENAME --chain-id $CHAIN
 
+cd ~/arkh-blockchain/binary 
+tar -xzvf binary.tar.gz
+export PATH=$PATH:/workspace/arkh-blockchain/binary
+
+cd
+arkhd init validator
+cp arkh-blockchain/genesis/genesis.json .arkh/config
 
     # Set peers and seeds
     echo -e "\e[1m\e[32m7. Set seeds & persistent peers... \e[0m" && sleep 1
@@ -128,8 +131,8 @@ sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
 
     # Download genesis and addrbook
     echo -e "\e[1m\e[32m8. Download genesis & addrbook... \e[0m" && sleep 1
-curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
-#curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
+# curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
+# curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
 
 
 	echo -e "\e[1m\e[32m7. Set custom ports, pruning & snapshots configuration ...\e[0m" && sleep 1
@@ -156,22 +159,49 @@ sudo tee /etc/systemd/system/$BINARY.service > /dev/null << EOF
 [Unit]
 Description=$BINARY
 After=network-online.target
+
 [Service]
 User=$USER
-ExecStart=$(which cosmovisor) run start
+ExecStart=$(which $BINARY) start
 Restart=on-failure
 RestartSec=10
 LimitNOFILE=65535
 Environment="DAEMON_HOME=$HOME/$FOLDER"
 Environment="DAEMON_NAME=$BINARY"
 Environment="UNSAFE_SKIP_BACKUP=true"
+
 [Install]
 WantedBy=multi-user.target
 EOF
+
     # Register And Start Service
 sudo systemctl start $BINARY
 sudo systemctl daemon-reload
 sudo systemctl enable $BINARY
+
+    # Enable snapshots
+SNAP_RPC="https://asc-dataseed.arkhadian.com:443"
+LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
+BLOCK_HEIGHT=$((LATEST_HEIGHT - 1000)); \
+TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+echo $LATEST_HEIGHT $BLOCK_HEIGHT $TRUST_HASH
+
+sudo systemctl stop $BINARY
+$BINARY unsafe-reset-all --home ~/.arkh/
+
+sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
+s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" ~/.arkh/config/config.toml
+more ~/.arkh/config/config.toml | grep 'rpc_servers'
+more ~/.arkh/config/config.toml | grep 'trust_height'
+more ~/.arkh/config/config.toml | grep 'trust_hash'
+
+sudo systemctl restart $BINARY
+
+clear
+sleep 2
 
 echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCET ====================\e[0m"
 echo ""
