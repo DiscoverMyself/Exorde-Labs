@@ -22,21 +22,21 @@ echo -e "\e[1;35m	     R3 by: Aprame   \e[0m";
 echo -e "\e[0m"
 
 
-# thanks to: sxlmnwb
+#thanks to: sxlmnwb
 
 # set variables
-SOURCE=8ball
+SOURCE=arkh-blockchain
 WALLET=wallet
-BINARY=8ball
-FOLDER=.8ball
-CHAIN=eightball-1
-VERSION=v0.34.24
-DENOM=uebl
+BINARY=arkhd
+FOLDER=.arkh
+CHAIN=" "
+VERSION=v1.0.0
+DENOM=arkh
 COSMOVISOR=cosmovisor
-REPO=https://github.com/sxlmnwb/8ball
+REPO=https://github.com/vincadian/arkh-blockchain
 #GENESIS=https://snap.nodexcapital.com/planq/genesis.json
-ADDRBOOK=https://snap.nodexcapital.com/planq/addrbook.json
-PORT=23
+#ADDRBOOK=https://snap.nodexcapital.com/planq/addrbook.json
+PORT=18
 
 
 echo "export SOURCE=${SOURCE}" >> $HOME/.bash_profile
@@ -95,25 +95,35 @@ rm -rf $BINARY
 git clone $REPO
 cd $BINARY
 git checkout $VERSION
-go build -o $BINARY ./cmd/eightballd
+go build -o $BINARY ./cmd/arkhd
 sudo mv $BINARY /usr/bin/
+go install ./...
 
 
-	# install & build cosmovisor
-# 	echo -e "\e[1m\e[32m5. Install & build cosmovisor... \e[0m"
-# mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
-# mv build/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
-# rm -rf build
+	install & build cosmovisor
+	echo -e "\e[1m\e[32m5. Install & build cosmovisor... \e[0m"
+mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
+mv build/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
+rm -rf build
 
-    # Create application symlinks
-# ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
-# sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
+    Create application symlinks
+ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
+sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
 
     # Init config & chain
-$BINARY config chain-id $CHAIN
-$BINARY config keyring-backend file
-$BINARY config node tcp://localhost:${PORT}657
-$BINARY init $NODENAME --chain-id $CHAIN
+# $BINARY config chain-id $CHAIN
+# $BINARY config keyring-backend file
+# $BINARY config node tcp://localhost:${PORT}657
+# $BINARY init $NODENAME --chain-id $CHAIN
+
+cd binary 
+tar -xzvf binary.tar.gz
+export PATH=$PATH:/workspace/arkh-blockchain/binary
+cd
+arkhd init validator
+cp /workspace/arkh-blockchain/genesis/genesis.json .arkh/config
+
+arkhd start --p2p.seeds 808f01d4a7507bf7478027a08d95c575e1b5fa3c@asc-dataseed.arkhadian.com:26656 --p2p.persistent_peers 808f01d4a7507bf7478027a08d95c575e1b5fa3c@asc-dataseed.arkhadian.com:26656
 
 	# Set seeds & persistent peers
 	# seed and peers providing by: polkachu
@@ -152,49 +162,52 @@ sed -i -e "s/^snapshot-keep-recent *=.*/snapshot-keep-recent = \"2\"/" $HOME/$FO
 # Enable state Sync
 $BINARY tendermint unsafe-reset-all --home $HOME/$FOLDER
 
-SNAP_RPC="https://rpc.8ball.info:443"
+#SNAP_RPC="https://rpc.8ball.info:443"
 
-LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
-BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
-TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+# LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
+# BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
+# TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
 
-echo ""
-echo -e "\e[1m\e[31m[!]\e[0m HEIGHT : \e[1m\e[31m$LATEST_HEIGHT\e[0m BLOCK : \e[1m\e[31m$BLOCK_HEIGHT\e[0m HASH : \e[1m\e[31m$TRUST_HASH\e[0m"
-echo ""
+# echo ""
+# echo -e "\e[1m\e[31m[!]\e[0m HEIGHT : \e[1m\e[31m$LATEST_HEIGHT\e[0m BLOCK : \e[1m\e[31m$BLOCK_HEIGHT\e[0m HASH : \e[1m\e[31m$TRUST_HASH\e[0m"
+# echo ""
 
-sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
-s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
-s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/$FOLDER/config/config.toml
+# sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+# s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
+# s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+# s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/$FOLDER/config/config.toml
 
 
 	# Create Service
 	echo -e "\e[1m\e[32m8. Creating service files... \e[0m" && sleep 1
-sudo tee /etc/systemd/system/$BINARY.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/$BINARY.service > /dev/null << EOF
 [Unit]
 Description=$BINARY
 After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which $BINARY) start
+ExecStart=$(which cosmovisor) run start
 Restart=on-failure
-RestartSec=3
-LimitNOFILE=4096
+RestartSec=10
+LimitNOFILE=65535
+Environment="DAEMON_HOME=$HOME/$FOLDER"
+Environment="DAEMON_NAME=$BINARY"
+Environment="UNSAFE_SKIP_BACKUP=true"
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Register And Start Service
+# Start Service
 sudo systemctl daemon-reload
 sudo systemctl enable $BINARY
 sudo systemctl start $BINARY
 
-echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET ========================\e[0m"
+echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCET ====================\e[0m"
 echo ""
-echo -e "To check service status : \e[1m\e[36msystemctl status $BINARY\e[0m"
-echo -e "\e[1m\e[33mTo check logs status : \e[1m\e[33mjournalctl -fu $BINARY -o cat\e[0m"
-echo -e "To check Blocks status : \e[1m\e[31mcurl -s localhost:${PORT}657/status | jq .result.sync_info\e[0m"
+echo -e "\e[1m\e[36mTo check service status : systemctl status $BINARY\e[0m"
+echo -e "\e[1m\e[33mTo check logs status : journalctl -fu $BINARY -o cat\e[0m"
+echo -e "\e[1m\e[31mTo check Blocks status : $BINARY status 2>&1 | jq .SyncInfo\e[0m"
 echo " "
 sleep 2
