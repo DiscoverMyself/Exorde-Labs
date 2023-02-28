@@ -98,13 +98,13 @@ go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.4.0
 	# install & build cosmovisor
 	echo -e "\e[1m\e[32m4. Install & build cosmovisor... \e[0m"
 mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
-mv target/release/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
+mv build/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
 rm -rf build
 
     # Create application symlinks
 	echo -e "\e[1m\e[32m5. Create App symlinks... \e[0m"
 ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
-sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
+sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/bin/$BINARY
 
     # Init generation
     echo -e "\e[1m\e[32m6. Init config & Chain... \e[0m"
