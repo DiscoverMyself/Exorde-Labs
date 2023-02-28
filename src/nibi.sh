@@ -159,7 +159,7 @@ After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which $BINARY) start
+ExecStart=$(which $BINARY) start --home $HOME/FOLDER
 Restart=on-failure
 RestartSec=5
 LimitNOFILE=4096
