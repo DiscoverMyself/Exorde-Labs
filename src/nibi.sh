@@ -32,8 +32,8 @@ VERSION=v0.19.2
 DENOM=unibi
 COSMOVISOR=cosmovisor
 REPO=https://github.com/NibiruChain/nibiru.git
-GENESIS=https://snapshot.yeksin.net/nibiru/genesis.json
-ADDRBOOK=https://ss-t.nibiru.nodestake.top/addrbook.json
+GENESIS=https://anode.team/Nibiru/test/genesis.json
+ADDRBOOK=https://anode.team/Nibiru/test/addrbook.json
 PORT=101
 
 echo "export SOURCE=${SOURCE}" >> $HOME/.bash_profile
@@ -91,20 +91,19 @@ rm -rf $SOURCE
 git clone $REPO
 cd $SOURCE
 git checkout $VERSION
-make build
 make install
 go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.4.0
 
 	# install & build cosmovisor
 	echo -e "\e[1m\e[32m4. Install & build cosmovisor... \e[0m"
-mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
-mv build/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
-rm -rf build
+# mkdir -p $HOME/$FOLDER/$COSMOVISOR/genesis/bin
+# mv build/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
+# rm -rf build
 
     # Create application symlinks
 	echo -e "\e[1m\e[32m5. Create App symlinks... \e[0m"
-ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
-sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/bin/$BINARY
+# ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
+# ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/bin/$BINARY
 
     # Init generation
     echo -e "\e[1m\e[32m6. Init config & Chain... \e[0m"
@@ -115,11 +114,9 @@ $BINARY init $NODENAME --chain-id $CHAIN
 
     # Set peers and seeds
     echo -e "\e[1m\e[32m7. Set seeds & persistent peers... \e[0m" && sleep 1
-PEERS="e2b8b9f3106d669fe6f3b49e0eee0c5de818917e@213.239.217.52:32656,930b1eb3f0e57b97574ed44cb53b69fb65722786@144.76.30.36:15662,ad002a4592e7bcdfff31eedd8cee7763b39601e7@65.109.122.105:36656,4a81486786a7c744691dc500360efcdaf22f0840@15.235.46.50:26656,68874e60acc2b864959ab97e651ff767db47a2ea@65.108.140.220:26656,d5519e378247dfb61dfe90652d1fe3e2b3005a5b@65.109.68.190:39656"
-SEEDS="a431d3d1b451629a21799963d9eb10d83e261d2c@seed-1.itn-1.nibiru.fi:26656,6a78a2a5f19c93661a493ecbe69afc72b5c54117@seed-2.itn-1.nibiru.fi:26656"
-sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$PEERS\"|" $HOME/$FOLDER/config/config.toml
-sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
-
+SEEDS=""
+PEERS="dd58949cab9bf75a42b556d04d3a4b1bbfadd8b5@144.76.97.251:40656"
+sed -i.bak -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.nibid/config/config.toml
 
     # Download genesis and addrbook
     echo -e "\e[1m\e[32m8. Download genesis & addrbook... \e[0m" && sleep 1
@@ -162,10 +159,10 @@ After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which cosmovisor) run start
+ExecStart=$(which $BINARY) start
 Restart=on-failure
-RestartSec=10
-LimitNOFILE=65535
+RestartSec=5
+LimitNOFILE=4096
 Environment="DAEMON_HOME=$HOME/$FOLDER"
 Environment="DAEMON_NAME=$BINARY"
 Environment="UNSAFE_SKIP_BACKUP=true"
