@@ -122,7 +122,7 @@ sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
     # Download genesis and addrbook
     echo -e "\e[1m\e[32m8. Download genesis & addrbook... \e[0m" && sleep 1
 rm -rf $HOME/$FOLDER/config/genesis.json
-rm-rf $HOME/$FOLDER/config/addrbook.json
+rm -rf $HOME/$FOLDER/config/addrbook.json
 curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
 curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
 
