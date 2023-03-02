@@ -34,8 +34,8 @@ VERSION=v1.0.3
 DENOM=aplanq
 COSMOVISOR=cosmovisor
 REPO=https://github.com/planq-network/planq
-GENESIS=https://snap.nodexcapital.com/planq/genesis.json
-ADDRBOOK=https://snap.nodexcapital.com/planq/addrbook.json
+GENESIS=https://snapshots.nodeist.net/planq/genesis.json
+ADDRBOOK=https://snapshots.nodeist.net/planq/addrbook.json
 PORT=44
 
 
@@ -181,6 +181,6 @@ echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCE
 echo ""
 echo -e "\e[1m\e[36mTo check service status : systemctl status $BINARY\e[0m"
 echo -e "\e[1m\e[33mTo check logs status : journalctl -fu dymd -o cat\e[0m"
-echo -e "\e[1m\e[31mTo check Blocks status : $BINARY status 2>&1 | jq .SyncInfo\e[0m"
+echo -e "\e[1m\e[31mTo check Blocks status : curl -s localhost:${PORT}657/status | jq .result.sync_info\e[0m"
 echo " "
 sleep 2
