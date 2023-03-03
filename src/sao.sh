@@ -37,7 +37,7 @@ COSMOVISOR=cosmovisor
 REPO=https://github.com/SaoNetwork/sao-consensus.git
 GENESIS=https://raw.githubusercontent.com/SAONetwork/sao-consensus/testnet0/network/testnet0/config/genesis.json
 #ADDRBOOK=https://ss-t.nibiru.nodestake.top/addrbook.json
-PORT=39
+PORT=20
 
 
 echo "export SOURCE=${SOURCE}" >> $HOME/.bash_profile
