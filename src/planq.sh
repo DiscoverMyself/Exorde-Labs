@@ -30,7 +30,7 @@ WALLET=wallet
 BINARY=planqd
 FOLDER=.planqd
 CHAIN=planq_7070-2
-VERSION=v1.0.3
+VERSION=v1.0.4
 DENOM=aplanq
 COSMOVISOR=cosmovisor
 REPO=https://github.com/planq-network/planq
@@ -148,7 +148,7 @@ sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.025$DENOM\"/" $HO
 # Enable snapshots
 sed -i -e "s/^snapshot-interval *=.*/snapshot-interval = \"2000\"/" $HOME/$FOLDER/config/app.toml
 $BINARY tendermint unsafe-reset-all --home $HOME/$FOLDER --keep-addr-book
-curl -L https://snap.nodexcapital.com/planq/planq-latest.tar.lz4 | tar -Ilz4 -xf - -C $HOME/$FOLDER
+curl -L https://snap.planq.apramweb.tech/planq/planq-snapshot-20230306.tar.lz4 | tar -Ilz4 -xf - -C $HOME/$FOLDER
 
 
 	# Create Service
