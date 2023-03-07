@@ -2,7 +2,21 @@
 clear
 echo ""
 echo "Wait ..."
-sleep 3
+sleep 2
+clear
+# unset existing variables
+unset SOURCE
+unset BINARY
+unset FOLDER
+unset CHAIN
+unset VERSION
+unset DENOM
+unset REPO
+unset GENESIS
+unset PORT
+unset WALLET
+unset NODENAME
+cd; source .bashrc; cd -
 clear
        
 echo -e "\e[1;32m	                          ";
@@ -20,20 +34,6 @@ echo -e "\e[1;32m	        \___\__/          ";
 echo -e "\e[1;32m	                          ";
 echo -e "\e[1;35m	     R3 by: Aprame   \e[0m";
 echo -e "\e[0m"
-
-# unset existing variables
-unset SOURCE
-unset BINARY
-unset FOLDER
-unset CHAIN
-unset VERSION
-unset DENOM
-unset REPO
-unset GENESIS
-unset PORT
-unset WALLET
-unset NODENAME
-cd; source .bashrc; cd -
 
 # set new variables
 SOURCE=ojo
