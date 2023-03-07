@@ -2,9 +2,24 @@
 clear
 echo ""
 echo "Wait ..."
-sleep 3
+sleep 2
 clear
-       
+
+# unset existing variables
+unset SOURCE
+unset BINARY
+unset FOLDER
+unset CHAIN
+unset VERSION
+unset DENOM
+unset REPO
+unset GENESIS
+unset PORT
+unset WALLET
+unset NODENAME
+cd; source .bashrc; cd -
+clear
+
 echo -e "\e[1;32m	                          ";
 echo -e "\e[1;32m	    _____\    _______     ";
 echo -e "\e[1;32m	   /      \  |      /\    ";
@@ -21,9 +36,7 @@ echo -e "\e[1;32m	                          ";
 echo -e "\e[1;35m	     R3 by: Aprame   \e[0m";
 echo -e "\e[0m"
 
-
-#script by: Nodexcapital
-
+# set new variables
 # set variables
 SOURCE=planq
 WALLET=wallet
@@ -36,7 +49,6 @@ COSMOVISOR=cosmovisor
 REPO=https://github.com/planq-network/planq
 GENESIS=https://snapshots.nodeist.net/planq/genesis.json
 ADDRBOOK=https://snapshots.nodeist.net/planq/addrbook.json
-PORT=44
 
 
 echo "export SOURCE=${SOURCE}" >> $HOME/.bash_profile
@@ -53,15 +65,13 @@ echo "export ADDRBOOK=${ADDRBOOK}" >> $HOME/.bash_profile
 echo "export PORT=${PORT}" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 
-# set vars input
-if [ ! $NODENAME ]; then
-	read -p "Enter node name: " NODENAME
-	echo 'export NODENAME='$NODENAME >> $HOME/.bash_profile
-fi
+# define user input as variable
+read -p "Enter node name: " NODENAME
+read -p "Enter your custom Port: " PORT
 
-if [ ! $WALLET ]; then
-	echo "export WALLET=wallet" >> $HOME/.bash_profile
-fi
+echo 'export NODENAME='$NODENAME >> $HOME/.bash_profile
+echo 'export PORT='$PORT >> $HOME/.bash_profile
+echo "export WALLET=wallet" >> $HOME/.bash_profile
 
 echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile
 source ~/.bash_profile
@@ -105,11 +115,11 @@ mv build/$BINARY $HOME/$FOLDER/$COSMOVISOR/genesis/bin/
 rm -rf build
 
     # Create application symlinks
-rm -rf /usr/local/bin/$BINARY 
+rm -rf /usr/bin/$BINARY
 ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
-sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/local/bin/$BINARY
+sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/bin/$BINARY
 
-    # Init config & chain
+	# Init config & chain
 $BINARY config chain-id $CHAIN
 $BINARY config keyring-backend file
 $BINARY config node tcp://localhost:${PORT}657
@@ -121,16 +131,16 @@ $BINARY init $NODENAME --chain-id $CHAIN
 SEEDS=$(curl -sL https://raw.githubusercontent.com/planq-network/networks/main/mainnet/seeds.txt | awk '{print $1}' | paste -s -d, -)
 sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
 
-    # Download genesis file & addrbook
-curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
-curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
+	# Download genesis file & addrbook
+sudo curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
+sudo curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
 
 	# Set custom ports, pruning & snapshots configuration
 	echo -e "\e[1m\e[32m7. Set ports, pruning & snapshots configuration ...\e[0m" && sleep 1
 sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${PORT}658\"%; s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:${PORT}657\"%; s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${PORT}060\"%; s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${PORT}656\"%; s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${PORT}660\"%" $HOME/$FOLDER/config/config.toml
 sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${PORT}317\"%; s%^address = \":8080\"%address = \":${PORT}080\"%; s%^address = \"0.0.0.0:9090\"%address = \"0.0.0.0:${PORT}090\"%; s%^address = \"0.0.0.0:9091\"%address = \"0.0.0.0:${PORT}091\"%" $HOME/$FOLDER/config/app.toml
 
-# Set Config Pruning
+	# Set Config Pruning
 pruning="custom"
 pruning_keep_recent="100"
 pruning_keep_every="0"
@@ -140,16 +150,32 @@ sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"$pruning_keep_rec
 sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"$pruning_keep_every\"/" $HOME/$FOLDER/config/app.toml
 sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"$pruning_interval\"/" $HOME/$FOLDER/config/app.toml
 
-# Set Config prometheus
+	# Set Config prometheus
 sed -i -e "s/prometheus = false/prometheus = true/" $HOME/$FOLDER/config/config.toml
 
-# Set minimum gas price
+	# Set minimum gas price
 sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.025$DENOM\"/" $HOME/$FOLDER/config/app.toml
 
-# Enable snapshots
-sed -i -e "s/^snapshot-interval *=.*/snapshot-interval = \"2000\"/" $HOME/$FOLDER/config/app.toml
-$BINARY tendermint unsafe-reset-all --home $HOME/$FOLDER --keep-addr-book
-curl -L https://snap.planq.apramweb.tech/planq/planq-snapshot-20230306.tar.lz4 | tar -Ilz4 -xf - -C $HOME/$FOLDER
+	# Enable statesync (by Apramnode)
+cp $HOME/.planqd/data/priv_validator_state.json $HOME/.planqd/priv_validator_state.json.backup
+planqd tendermint unsafe-reset-all --home $HOME/.planqd --keep-addr-book
+
+SNAP_RPC="https://rpc.planq.apramweb.tech:443"
+STATESYNC_PEERS="74e0c1bf8424d9fb97eefd4112a34e901b1ae1ed@45.151.123.72:44656"
+
+LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
+BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
+TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+
+sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.planqd/config/config.toml
+sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$STATESYNC_PEERS\"|" $HOME/.planqd/config/config.toml
+
+mv $HOME/.planqd/priv_validator_state.json.backup $HOME/.planqd/data/priv_validator_state.json
+
+
 
 
 	# Create Service
@@ -173,15 +199,15 @@ Environment="UNSAFE_SKIP_BACKUP=true"
 WantedBy=multi-user.target
 EOF
 
-# Start Service
+	# Start Service
 sudo systemctl daemon-reload
 sudo systemctl enable $BINARY
 sudo systemctl start $BINARY
 
-echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCET ====================\e[0m"
+echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA CREATE/IMPORT WALLET ====================\e[0m"
 echo ""
 echo -e "\e[1m\e[36mTo check service status : systemctl status $BINARY\e[0m"
-echo -e "\e[1m\e[33mTo check logs status : journalctl -fu dymd -o cat\e[0m"
+echo -e "\e[1m\e[33mTo check logs status : journalctl -fu $BINARY -o cat\e[0m"
 echo -e "\e[1m\e[31mTo check Blocks status : curl -s localhost:${PORT}657/status | jq .result.sync_info\e[0m"
 echo " "
 sleep 2
