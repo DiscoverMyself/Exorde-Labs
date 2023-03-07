@@ -63,15 +63,13 @@ echo "export ADDRBOOK=${ADDRBOOK}" >> $HOME/.bash_profile
 echo "export PORT=${PORT}" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 
-# set vars input
-if [ ! $NODENAME ]; then
-	read -p "Enter node name: " NODENAME
-	echo 'export NODENAME='$NODENAME >> $HOME/.bash_profile
-fi
+# define user input as variable
+read -p "Enter node name: " NODENAME
+read -p "Enter your custom Port: " PORT
 
-if [ ! $WALLET ]; then
-	echo "export WALLET=wallet" >> $HOME/.bash_profile
-fi
+echo 'export NODENAME='$NODENAME >> $HOME/.bash_profile
+echo 'export PORT='$PORT >> $HOME/.bash_profile
+echo "export WALLET=wallet" >> $HOME/.bash_profile
 
 echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile
 source ~/.bash_profile
@@ -119,7 +117,7 @@ rm -rf /usr/bin/$BINARY
 ln -s $HOME/$FOLDER/$COSMOVISOR/genesis $HOME/$FOLDER/$COSMOVISOR/current
 sudo ln -s $HOME/$FOLDER/$COSMOVISOR/current/bin/$BINARY /usr/bin/$BINARY
 
-    # Init config & chain
+	# Init config & chain
 $BINARY config chain-id $CHAIN
 $BINARY config keyring-backend file
 $BINARY config node tcp://localhost:${PORT}657
@@ -133,7 +131,7 @@ SEEDS=""
 sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$PEERS\"|" $HOME/$FOLDER/config/config.toml
 sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
 
-    # Download genesis file & addrbook
+	# Download genesis file & addrbook
 curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
 # curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
 
@@ -142,7 +140,7 @@ curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
 sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${PORT}658\"%; s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:${PORT}657\"%; s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${PORT}060\"%; s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${PORT}656\"%; s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${PORT}660\"%" $HOME/$FOLDER/config/config.toml
 sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${PORT}317\"%; s%^address = \":8080\"%address = \":${PORT}080\"%; s%^address = \"0.0.0.0:9090\"%address = \"0.0.0.0:${PORT}090\"%; s%^address = \"0.0.0.0:9091\"%address = \"0.0.0.0:${PORT}091\"%" $HOME/$FOLDER/config/app.toml
 
-# Set Config Pruning
+	# Set Config Pruning
 pruning="custom"
 pruning_keep_recent="100"
 pruning_keep_every="0"
@@ -152,13 +150,13 @@ sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"$pruning_keep_rec
 sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"$pruning_keep_every\"/" $HOME/$FOLDER/config/app.toml
 sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"$pruning_interval\"/" $HOME/$FOLDER/config/app.toml
 
-# Set Config prometheus
+	# Set Config prometheus
 sed -i -e "s/prometheus = false/prometheus = true/" $HOME/$FOLDER/config/config.toml
 
-# Set minimum gas price
+	# Set minimum gas price
 sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.025$DENOM\"/" $HOME/$FOLDER/config/app.toml
 
-# Enable statesync (by Indonode)
+	# Enable statesync (by Indonode)
 ojod tendermint unsafe-reset-all --home $HOME/.ojo --keep-addr-book
 
 STATE_SYNC_RPC="https://rpc.ojo-t.indonode.net:443"
