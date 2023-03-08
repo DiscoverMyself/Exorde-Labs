@@ -43,7 +43,7 @@ WALLET=wallet
 BINARY=planqd
 FOLDER=.planqd
 CHAIN=planq_7070-2
-VERSION=v1.0.4
+VERSION=v1.0.5
 DENOM=aplanq
 COSMOVISOR=cosmovisor
 REPO=https://github.com/planq-network/planq
@@ -206,8 +206,8 @@ sudo systemctl start $BINARY
 
 echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA CREATE/IMPORT WALLET ====================\e[0m"
 echo ""
-echo -e "\e[1m\e[36mTo check service status : systemctl status $BINARY\e[0m"
-echo -e "\e[1m\e[33mTo check logs status : journalctl -fu $BINARY -o cat\e[0m"
-echo -e "\e[1m\e[31mTo check Blocks status : curl -s localhost:${PORT}657/status | jq .result.sync_info\e[0m"
+echo -e "To check service status : \e[1m\e[36msystemctl status $BINARY\e[0m"
+echo -e "To check logs status : \e[1m\e[33mjournalctl -fu $BINARY -o cat\e[0m"
+echo -e "To check Blocks status : \e[1m\e[31mcurl -s localhost:${PORT}657/status | jq .result.sync_info\e[0m"
 echo " "
 sleep 2
