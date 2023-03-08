@@ -1,0 +1,20 @@
+SOURCE=planq
+BINARY=planqd
+FOLDER=.planqd
+REPO=https://github.com/planq-network/planq
+VERSION=v1.0.5
+
+sudo systemctl stop $BINARY
+
+sudo rm -f $HOME/$FOLDER/cosmovisor/genesis/bin/$BINARY
+
+cd $HOME
+rm -rf $SOURCE
+git clone $REPO
+cd $SOURCE
+git checkout $VERSION
+make install
+
+sudo mv $HOME/go/bin/$BINARY $HOME/$FOLDER/cosmovisor/genesis/bin/
+
+sudo systemctl start $BINARY
