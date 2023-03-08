@@ -128,8 +128,9 @@ $BINARY config node tcp://localhost:${PORT}657
 $BINARY init $NODENAME --chain-id $CHAIN
 
 	# Set seeds & persistent peers
+	# seed and peers providing by: polkachu
 	echo -e "\e[1m\e[32m6. Set seeds & persistent peers... \e[0m" && sleep 1
-PEERS="dbd1f5b01f010b9e6ae6d9f293d2743b03482db5@34.171.132.212:26656,1d1da5742bdd281f0829124ec60033f374e9ddac@34.170.16.69:26656"
+PEERS="dbd1f5b01f010b9e6ae6d9f293d2743b03482db5@34.171.132.212:26656,1d1da5742bdd281f0829124ec60033f374e9ddac@34.170.16.69:26656,aba89244024886c5cf724bf644cff3421367aedb@78.46.99.50:21656,aba89244024886c5cf724bf644cff3421367aedb@78.46.99.50:21656"
 SEEDS=""
 sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$PEERS\"|" $HOME/$FOLDER/config/config.toml
 sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
