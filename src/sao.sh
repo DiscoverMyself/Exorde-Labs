@@ -189,23 +189,27 @@ systemctl enable $BINARY
 systemctl restart $BINARY
 
 # state sync
-SNAP_RPC=http://sao.rpc.t.stavr.tech:1077
-peers="006e207a3f235a28bc0815001b76ee385ee4bda3@sao.peers.stavr.tech:1076"
-sed -i.bak -e "s/^persistent_peers *=.*/persistent_peers = \"$peers\"/" $HOME/.sao/config/config.toml
-LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
-BLOCK_HEIGHT=$((LATEST_HEIGHT - 100)); \
-TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
-
+sudo systemctl stop saod
+cp $HOME/.sao/data/priv_validator_state.json $HOME/.sao/priv_validator_state.json.backup
+saod tendermint unsafe-reset-all --home $HOME/.sao --keep-addr-book
 echo $LATEST_HEIGHT $BLOCK_HEIGHT $TRUST_HASH
+
+SNAP_RPC="https://rpc-sao.sxlzptprjkt.xyz:443"
+STATESYNC_PEERS="a5261e9fba12d7a59cd1d4515a449e705734c39b@peers-sao.sxlzptprjkt.xyz:27656"
+
+LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
+BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
+TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
 
 sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
 s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
 s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
-s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
-s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" $HOME/.sao/config/config.toml
-saod tendermint unsafe-reset-all --home /root/.sao --keep-addr-book
-sed -i -e "s/^snapshot-interval *=.*/snapshot-interval = \"1500\"/" $HOME/.sao/config/app.toml
-sudo systemctl restart saod && journalctl -u saod -f -o cat
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.sao/config/config.toml
+sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$STATESYNC_PEERS\"|" $HOME/.sao/config/config.toml
+
+mv $HOME/.sao/priv_validator_state.json.backup $HOME/.sao/data/priv_validator_state.json
+
+sudo systemctl start saod
 
 echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCET ====================\e[0m"
 echo ""
@@ -213,6 +217,6 @@ echo -e "To check service status : \e[1m\e[36msystemctl status $BINARY\e[0m"
 echo -e "To check logs status : \e[1m\e[33mjournalctl -fu $BINARY -o cat\e[0m"
 echo -e "To check Blocks status : \e[1m\e[31mcurl -s localhost:${PORT}657/status | jq .result.sync_info\e[0m"
 echo " "
-sleep 2
+sleep 5
 
- journalctl -u saod -f --no-hostname -o cat
+sudo journalctl -fu saod -o cat
