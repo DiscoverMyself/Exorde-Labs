@@ -134,9 +134,9 @@ $BINARY init $NODENAME --chain-id $CHAIN
     # Set peers and seeds
     echo -e "\e[1m\e[32m7. Set seeds & persistent peers... \e[0m" && sleep 1
 PEERS="a5261e9fba12d7a59cd1d4515a449e705734c39b@peers-sao.sxlzptprjkt.xyz:27656"
-SEEDS=""
-sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$PEERS\"|" $HOME/$SAO_FOLDER/config/config.toml
-sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$SAO_FOLDER/config/config.toml
+SEEDS="e711b6631c3e5bb2f6c389cbc5d422912b05316b@seed.ppnv.space:41256"
+sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$PEERS\"|" $HOME/$FOLDER/config/config.toml
+sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
 
     # Download genesis and addrbook
     echo -e "\e[1m\e[32m8. Download genesis & addrbook... \e[0m" && sleep 1
