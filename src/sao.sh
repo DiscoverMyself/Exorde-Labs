@@ -29,14 +29,14 @@ sleep 1
 # Variable
 SOURCE=sao-consensus
 BINARY=saod
-CHAIN=sao-testnet0
+CHAIN=sao-testnet1
 FOLDER=.sao
-VERSION=testnet0
+VERSION=v0.1.3
 DENOM=sao
 COSMOVISOR=cosmovisor
 REPO=https://github.com/SaoNetwork/sao-consensus.git
-GENESIS=https://raw.githubusercontent.com/SAONetwork/sao-consensus/testnet0/network/testnet0/config/genesis.json
-#ADDRBOOK=https://ss-t.nibiru.nodestake.top/addrbook.json
+GENESIS=https://raw.githubusercontent.com/sxlzptprjkt/resource/master/testnet/sao/genesis.json
+ADDRBOOK=https://raw.githubusercontent.com/sxlzptprjkt/resource/master/testnet/sao/addrbook.json
 PORT=20
 
 
@@ -135,15 +135,15 @@ $BINARY init $NODENAME --chain-id $CHAIN
 
     # Set peers and seeds
     echo -e "\e[1m\e[32m7. Set seeds & persistent peers... \e[0m" && sleep 1
-# PEERS="e2b8b9f3106d669fe6f3b49e0eee0c5de818917e@213.239.217.52:32656,930b1eb3f0e57b97574ed44cb53b69fb65722786@144.76.30.36:15662,ad002a4592e7bcdfff31eedd8cee7763b39601e7@65.109.122.105:36656,4a81486786a7c744691dc500360efcdaf22f0840@15.235.46.50:26656,68874e60acc2b864959ab97e651ff767db47a2ea@65.108.140.220:26656,d5519e378247dfb61dfe90652d1fe3e2b3005a5b@65.109.68.190:39656"
-SEEDS="59cef823c1a426f15eb9e688287cd1bc2b6ea42d@152.70.126.187:26656,a5298771c624a376fdb83c48cc6c630e58092c62@192.18.136.151:26656,af7259853f202391e624c612ff9d3de1142b4ca4@52.77.248.130:26656,c196d06c9c37dee529ca167701e25f560a054d6d@3.35.136.39:26656"
-# sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$PEERS\"|" $HOME/$FOLDER/config/config.toml
-sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$FOLDER/config/config.toml
+PEERS="a5261e9fba12d7a59cd1d4515a449e705734c39b@peers-sao.sxlzptprjkt.xyz:27656"
+SEEDS=""
+sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$PEERS\"|" $HOME/$SAO_FOLDER/config/config.toml
+sed -i -e "s|^seeds *=.*|seeds = \"$SEEDS\"|" $HOME/$SAO_FOLDER/config/config.toml
 
     # Download genesis and addrbook
     echo -e "\e[1m\e[32m8. Download genesis & addrbook... \e[0m" && sleep 1
 curl -Ls $GENESIS > $HOME/$FOLDER/config/genesis.json
-# curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
+curl -Ls $ADDRBOOK > $HOME/$FOLDER/config/addrbook.json
 
     # Set custom ports
 	echo -e "\e[1m\e[32m9. Set ports, pruning & snapshots configuration ...\e[0m" && sleep 1
@@ -160,14 +160,10 @@ sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"$pruning_keep_rec
 sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"$pruning_keep_every\"/" $HOME/$FOLDER/config/app.toml
 sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"$pruning_interval\"/" $HOME/$FOLDER/config/app.toml
 
-
 sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.0001$DENOM\"/" $HOME/$FOLDER/config/app.toml
 
     # Enable snapshots
-sed -i -e "s/^snapshot-interval *=.*/snapshot-interval = \"2000\"/" $HOME/$FOLDER/config/app.toml
-# $BINARY tendermint unsafe-reset-all --home $HOME/$FOLDER --keep-addr-book
-# curl -L https://nibiru-t.service.indonode.net/nibiru-snapshot.tar.lz4 | tar -Ilz4 -xf - -C $HOME/$FOLDER
-
+    
     # Create Service
     echo -e "\e[1m\e[32m8. Creating service file...\e[0m" && sleep 1
 sudo tee /etc/systemd/system/$BINARY.service > /dev/null << EOF
@@ -194,6 +190,26 @@ systemctl daemon-reload
 systemctl enable $BINARY
 systemctl restart $BINARY
 
+# state sync
+sudo systemctl stop saod
+cp $HOME/.sao/data/priv_validator_state.json $HOME/.sao/priv_validator_state.json.backup
+saod tendermint unsafe-reset-all --home $HOME/.sao
+STATE_SYNC_RPC=http://rpc.sao.ppnv.space:49657
+STATE_SYNC_PEER=72f49fb2fbb3410ec876a3203c715821631ce7c3@rpc.sao.ppnv.space:49656
+LATEST_HEIGHT=$(curl -s $STATE_SYNC_RPC/block | jq -r .result.block.header.height)
+SYNC_BLOCK_HEIGHT=$(($LATEST_HEIGHT - 1000))
+SYNC_BLOCK_HASH=$(curl -s "$STATE_SYNC_RPC/block?height=$SYNC_BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+sed -i.bak -e "s|^enable *=.*|enable = true|" $HOME/.sao/config/config.toml
+sed -i.bak -e "s|^rpc_servers *=.*|rpc_servers = \"$STATE_SYNC_RPC,$STATE_SYNC_RPC\"|" \
+$HOME/.sao/config/config.toml
+sed -i.bak -e "s|^trust_height *=.*|trust_height = $SYNC_BLOCK_HEIGHT|" \
+$HOME/.sao/config/config.toml
+sed -i.bak -e "s|^trust_hash *=.*|trust_hash = \"$SYNC_BLOCK_HASH\"|" \
+$HOME/.sao/config/config.toml
+sed -i.bak -e "s|^persistent_peers *=.*|persistent_peers = \"$STATE_SYNC_PEER\"|" \
+$HOME/.sao/config/config.toml
+mv $HOME/.sao/priv_validator_state.json.backup $HOME/.sao/data/priv_validator_state.json
+sudo systemctl restart saod
 
 echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCET ====================\e[0m"
 echo ""
@@ -202,3 +218,5 @@ echo -e "To check logs status : \e[1m\e[33mjournalctl -fu $BINARY -o cat\e[0m"
 echo -e "To check Blocks status : \e[1m\e[31mcurl -s localhost:${PORT}657/status | jq .result.sync_info\e[0m"
 echo " "
 sleep 2
+
+ journalctl -u saod -f --no-hostname -o cat
