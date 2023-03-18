@@ -5,21 +5,37 @@ echo "Wait ..."
 sleep 3
 clear
        
-echo -e "\e[1;32m	                          ";
-echo -e "\e[1;32m	    _____\    _______     ";
-echo -e "\e[1;32m	   /      \  |      /\    ";
-echo -e "\e[1;32m	  /_______/  |_____/  \   ";
-echo -e "\e[1;32m	 |   \   /        /   /   ";
-echo -e "\e[1;32m	  \   \         \/   /    ";
-echo -e "\e[1;32m	   \  /    R3    \__/_    ";
-echo -e "\e[1;32m	    \/ ____    /\         ";
-echo -e "\e[1;32m	      /  \    /  \        ";
-echo -e "\e[1;32m	     /\   \  /   /        ";
-echo -e "\e[1;32m	       \   \/   /         ";
-echo -e "\e[1;32m	        \___\__/          ";
-echo -e "\e[1;32m	                          ";
-echo -e "\e[1;35m	     R3 by: Aprame   \e[0m";
-echo -e "\e[0m"
+
+echo -e "\e[1;32m	                          											";
+echo -e "\e[1;32m                                .------=======+.						";
+echo -e "\e[1;32m                               :==+*****######%#:						";
+echo -e "\e[1;32m                             .-====++++*#*###**#%:						";
+echo -e "\e[1;32m                            .=======++++#######*#%-					";
+echo -e "\e[1;32m                           :=========+++*#######*#%=					";
+echo -e "\e[1;32m                         .-===========+*+*#########%=					";
+echo -e "\e[1;32m                        -+++++++++++++::++**#######*%+					";
+echo -e "\e[1;32m                       :=------------.  .+++**######*%*				";
+echo -e "\e[1;32m                                         -*+++**#####*#*--				";
+echo -e "\e[1;32m                                        .:=+**++**####*%#:				";
+echo -e "\e[1;32m                   .-------:::::           .-=**+++**##=				";
+echo -e "\e[1;32m                    -++++++++++=              .-+**+*+:				";
+echo -e "\e[1;32m                   -+=======+==-                 :=+-					";
+echo -e "\e[1;32m                 .=+++++++++===:                          .:+*.		";
+echo -e "\e[1;32m                :++=++++++=====.                      .:=*###%#.		";
+echo -e "\e[1;32m               -++=++++=======-                    .=++**###**#%:		";
+echo -e "\e[1;32m             .=+++++========-=-                     =*++++*###*#%-		";
+echo -e "\e[1;32m            -+=============: ..               .      -*++++***###%-	";
+echo -e "\e[1;32m          .=+=============: .....          :-==:::::::=*++++++****%:	";
+echo -e "\e[1;32m          .#####################%=      :-=++++++++++===+++++++++*=	";
+echo -e "\e[1;32m           .*#*##################=   :-=+++==++==++======+++++++*=		";
+echo -e "\e[1;32m            .*###################=  .=++==+++++++=========+++++*=		";
+echo -e "\e[1;32m             .*****#########*****=    -++=++++=============+++*-		";
+echo -e "\e[1;32m              .++++++*****++++++*-     .=+==================+*-		";
+echo -e "\e[1;32m               .+****************=       -==----------------=-			";
+echo -e "\e[1;32m                .:.::::::::::::::.        :=.							";
+echo -e "\e[1;32m                                           .							";
+echo -e "\e[1;32m	                          											";
+echo -e "\e[1;35m                               R3 by: Aprame                      \e[0m";
 
 sleep 1
 
@@ -45,28 +61,21 @@ echo "export WALLET=${WALLET}" >> $HOME/.bash_profile
 echo "export BINARY=${BINARY}" >> $HOME/.bash_profile
 echo "export CHAIN=${CHAIN}" >> $HOME/.bash_profile
 echo "export FOLDER=${FOLDER}" >> $HOME/.bash_profile
+echo "export DENOM=${DENOM}" >> $HOME/.bash_profile
 echo "export VERSION=${VERSION}" >> $HOME/.bash_profile
 echo "export REPO=${REPO}" >> $HOME/.bash_profile
-echo "export DENOM=${DENOM}" >> $HOME/.bash_profile
 echo "export COSMOVISOR=${COSMOVISOR}" >> $HOME/.bash_profile
 echo "export GENESIS=${GENESIS}" >> $HOME/.bash_profile
 echo "export ADDRBOOK=${ADDRBOOK}" >> $HOME/.bash_profile
+
+
+
+# set var input
+read -p "Enter your custom port: " PORT
+read -p "Enter node name: " NODENAME
 echo "export PORT=${PORT}" >> $HOME/.bash_profile
+echo "export NODENAME=${NODENAME}" >> $HOME/.bash_profile
 source $HOME/.bash_profile
-
-
-# set vars input
-if [ ! $NODENAME ]; then
-	read -p "Enter node name: " NODENAME
-	echo 'export NODENAME='$NODENAME >> $HOME/.bash_profile
-fi
-
-if [ ! $WALLET ]; then
-	echo "export WALLET=wallet" >> $HOME/.bash_profile
-fi
-
-echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile
-source ~/.bash_profile
 
 echo '================================================='
 echo -e "Your node name: \e[1m\e[32m$NODENAME\e[0m"
@@ -75,17 +84,6 @@ echo -e "Your chain name: \e[1m\e[32m$CHAIN\e[0m"
 echo -e "Your Custom port: \e[1m\e[32m$PORT\e[0m"
 echo '================================================='
 sleep 2
-
-# Set Vars
-if [ ! $NODENAME ]; then
-	read -p "hello@nodexcapital:~# [ENTER YOUR NODE] > " NODENAME
-	echo 'export NODENAME='$NODENAME >> $HOME/.bash_profile
-fi
-echo ""
-echo -e "YOUR NODE NAME : \e[1m\e[35m$NODENAME\e[0m"
-echo -e "NODE CHAIN CHAIN  : \e[1m\e[35m$CHAIN\e[0m"
-echo -e "NODE PORT      : \e[1m\e[35m$PORT\e[0m"
-echo ""
 
     # Update
 sudo apt update && sudo apt upgrade -y
@@ -193,23 +191,23 @@ systemctl restart $BINARY
 # state sync
 sudo systemctl stop saod
 cp $HOME/.sao/data/priv_validator_state.json $HOME/.sao/priv_validator_state.json.backup
-saod tendermint unsafe-reset-all --home $HOME/.sao
-STATE_SYNC_RPC=http://rpc.sao.ppnv.space:49657
-STATE_SYNC_PEER=72f49fb2fbb3410ec876a3203c715821631ce7c3@rpc.sao.ppnv.space:49656
-LATEST_HEIGHT=$(curl -s $STATE_SYNC_RPC/block | jq -r .result.block.header.height)
-SYNC_BLOCK_HEIGHT=$(($LATEST_HEIGHT - 1000))
-SYNC_BLOCK_HASH=$(curl -s "$STATE_SYNC_RPC/block?height=$SYNC_BLOCK_HEIGHT" | jq -r .result.block_id.hash)
-sed -i.bak -e "s|^enable *=.*|enable = true|" $HOME/.sao/config/config.toml
-sed -i.bak -e "s|^rpc_servers *=.*|rpc_servers = \"$STATE_SYNC_RPC,$STATE_SYNC_RPC\"|" \
-$HOME/.sao/config/config.toml
-sed -i.bak -e "s|^trust_height *=.*|trust_height = $SYNC_BLOCK_HEIGHT|" \
-$HOME/.sao/config/config.toml
-sed -i.bak -e "s|^trust_hash *=.*|trust_hash = \"$SYNC_BLOCK_HASH\"|" \
-$HOME/.sao/config/config.toml
-sed -i.bak -e "s|^persistent_peers *=.*|persistent_peers = \"$STATE_SYNC_PEER\"|" \
-$HOME/.sao/config/config.toml
+saod tendermint unsafe-reset-all --home $HOME/.sao --keep-addr-book
+
+SNAP_RPC="https://rpc-sao.sxlzptprjkt.xyz:443"
+STATESYNC_PEERS="a5261e9fba12d7a59cd1d4515a449e705734c39b@peers-sao.sxlzptprjkt.xyz:27656"
+
+LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
+BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
+TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+
+sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.sao/config/config.toml
+sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$STATESYNC_PEERS\"|" $HOME/.sao/config/config.toml
+
 mv $HOME/.sao/priv_validator_state.json.backup $HOME/.sao/data/priv_validator_state.json
-sudo systemctl restart saod
+sudo systemctl start saod
 
 echo -e "\e[1m\e[35m================ KELAR CUY, JAN LUPA BUAT WALLET & REQ FAUCET ====================\e[0m"
 echo ""
