@@ -126,20 +126,6 @@ sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.planqd/config/config.
 sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.025aplanq\"/" $HOME/.planqd/config/app.toml
 
 
-# Enable state sync
-SNAP_RPC="https://planq-rpc.polkachu.com:443"
-
-LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
-BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
-TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
-
-sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
-s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
-s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.planqd/config/config.toml
-
-planqd tendermint unsafe-reset-all --home $HOME/.planqd --keep-addr-book
-
 	# Create Service
 	echo -e "\e[1m\e[32m8. Creating service files... \e[0m" && sleep 1
 sudo tee /etc/systemd/system/planqd.service > /dev/null << EOF
@@ -161,9 +147,26 @@ Environment="UNSAFE_SKIP_BACKUP=true"
 WantedBy=multi-user.target
 EOF
 
-# Start Service
+# Enable Service
 sudo systemctl daemon-reload
 sudo systemctl enable planqd
+
+# Enable state sync
+systemctl stop planqd
+planqd tendermint unsafe-reset-all --home $HOME/.planqd --keep-addr-book
+
+SNAP_RPC="https://planq-rpc.polkachu.com:443"
+
+LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
+BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
+TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+
+sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.planqd/config/config.toml
+
+# Start Service
 sudo systemctl start planqd
 
 echo -e "\e[1m\e[35m================ Node Sucessfully Installed! ====================\e[0m"
