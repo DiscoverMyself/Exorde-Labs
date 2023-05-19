@@ -129,21 +129,6 @@ sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.gitopia/config/config
 # Set minimum gas price
 # sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.0$DENOM\"/" $HOME/$FOLDER/config/app.toml
 
-
-# Enable state sync
-SNAP_RPC="https://gitopia-rpc.polkachu.com:443"
-
-LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
-BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
-TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
-
-sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
-s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
-s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.gitopia/config/config.toml
-
-gitopiad tendermint unsafe-reset-all --home $HOME/.gitopia --keep-addr-book
-
 	# Create Service
 	echo -e "\e[1m\e[32m8. Creating service files... \e[0m" && sleep 1
 sudo tee /etc/systemd/system/gitopia.service > /dev/null << EOF
@@ -165,9 +150,27 @@ Environment="UNSAFE_SKIP_BACKUP=true"
 WantedBy=multi-user.target
 EOF
 
-# Start Service
+# Enable service
 sudo systemctl daemon-reload
 sudo systemctl enable gitopiad
+
+# Enable state sync
+systemctl stop gitopiad
+gitopiad tendermint unsafe-reset-all --home $HOME/.gitopia --keep-addr-book
+
+SNAP_RPC="https://gitopia-rpc.polkachu.com:443"
+
+LATEST_HEIGHT=$(curl -s $SNAP_RPC/block | jq -r .result.block.header.height); \
+BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)); \
+TRUST_HASH=$(curl -s "$SNAP_RPC/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+
+sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC,$SNAP_RPC\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.gitopia/config/config.toml
+
+
+# Start Service
 sudo systemctl start gitopiad
 
 echo -e "\e[1m\e[35m================ Node Sucessfully Installed! ====================\e[0m"
