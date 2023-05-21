@@ -131,9 +131,9 @@ sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.gitopia/config/config
 
 	# Create Service
 	echo -e "\e[1m\e[32m8. Creating service files... \e[0m" && sleep 1
-sudo tee /etc/systemd/system/gitopia.service > /dev/null << EOF
+sudo tee /etc/systemd/system/gitopiad.service > /dev/null << EOF
 [Unit]
-Description=gitopia node service
+Description=gitopiad node service
 After=network-online.target
 
 [Service]
