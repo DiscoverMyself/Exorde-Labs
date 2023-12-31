@@ -9,9 +9,10 @@ else
   sudo apt update && sudo apt install curl -y < "/dev/null"
 fi
 
+clear
+
 # Displayed QB Logos
 sleep 1 && curl -s https://raw.githubusercontent.com/DiscoverMyself/Exorde-Labs/resources/src/logo.sh | bash && sleep 1
-
 
 # DNS & Port Configuration
 echo 'Fully Qualified Domain Name (FQDN). example => redbelly.qbnode.online or qbnode.online'
