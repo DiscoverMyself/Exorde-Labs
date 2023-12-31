@@ -30,7 +30,7 @@ read -r -p "Enter Websocket Port (Default: 8546) : " wsport
 sleep 0.5
 
 # Download Binaries, Genesis & Loader
-git clone https://github.com/DiscoverMyself/rbn-files > /dev/null
+git clone https://github.com/DiscoverMyself/rbn-files >/dev/null 2>&1
 mv $HOME/rbn-files/genesis.json $HOME/ > /dev/null
 mv $HOME/rbn-files/rbbc $HOME/ > /dev/null
 mv $HOME/rbn-files/spinner.sh $HOME/ > /dev/null
@@ -38,13 +38,13 @@ chmod +x spinner.sh > /dev/null
 rm -rf rbn-files > /dev/null
 
 # Update system and install build tools
-sudo apt update > /dev/null
-sudo apt install snapd > /dev/null
-sudo snap install core > /dev/null
-sudo snap refresh core > /dev/null
-sudo apt install net-tools > /dev/null
-sudo apt-get install -y cron curl unzip > /dev/null
-sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade > /dev/null
+sudo apt update >/dev/null 2>&1
+sudo apt install snapd >/dev/null 2>&1
+sudo snap install core >/dev/null 2>&1
+sudo snap refresh core >/dev/null 2>&1
+sudo apt install net-tools > /dev/null 2>&1
+sudo apt-get install -y cron curl unzip > /dev/null 2>&1
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade > /dev/null 2>&1
 ./spinner.sh "sleep 5" "..." "Update system and install build tools"
 
 # Create Config File
