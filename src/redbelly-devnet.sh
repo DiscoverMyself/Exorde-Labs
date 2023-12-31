@@ -16,17 +16,17 @@ sleep 1 && curl -s https://raw.githubusercontent.com/DiscoverMyself/Exorde-Labs/
 
 # DNS & Port Configuration
 echo 'Fully Qualified Domain Name - FQDN. (example => redbelly.qbnode.online / qbnode.online)'
-read -r -p "Enter Your Domain Name (without https://) : " fqn
+read -r -p "Enter Your Domain Name (without https://): " fqn
 sleep 0.5
-read -r -p "Enter Node ID - As Node Registration : " ID
+read -r -p "Enter Node ID - As Node Registration: " ID
 sleep 0.5
 read -r -p "Enter signing address for approval tx (Prefer Burner Wallet): " Signing
 sleep 0.5
 read -r -p "Enter Signing privatekey- Please Use fresh/burner new wallet: " Privkey
 sleep 1
-read -r -p "Enter RPC Port (Default: 8545) : " rpcport
+read -r -p "Enter RPC Port (Default: 8545): " rpcport
 sleep 0.5
-read -r -p "Enter Websocket Port (Default: 8546) : " wsport
+read -r -p "Enter Websocket Port (Default: 8546): " wsport
 sleep 0.5
 
 # Download Binaries, Genesis & Loader
