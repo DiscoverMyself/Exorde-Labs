@@ -30,21 +30,21 @@ read -r -p "Enter Websocket Port (Default: 8546) : " wsport
 sleep 0.5
 
 # Download Binaries, Genesis & Loader
-git clone https://github.com/DiscoverMyself/rbn-files
-mv $HOME/rbn-files/genesis.json $HOME/
-mv $HOME/rbn-files/rbbc $HOME/
-mv $HOME/rbn-files/spinner.sh $HOME/
-rm -rf rbn-files
-clear
+git clone https://github.com/DiscoverMyself/rbn-files > /dev/null
+mv $HOME/rbn-files/genesis.json $HOME/ > /dev/null
+mv $HOME/rbn-files/rbbc $HOME/ > /dev/null
+mv $HOME/rbn-files/spinner.sh $HOME/ > /dev/null
+chmod +x spinner.sh > /dev/null
+rm -rf rbn-files > /dev/null
 
 # Update system and install build tools
-sudo apt update > /dev/null 2>&1
-sudo apt install snapd > /dev/null 2>&1
-sudo snap install core > /dev/null 2>&1
-sudo snap refresh core > /dev/null 2>&1
-sudo apt install net-tools > /dev/null 2>&1
-sudo apt-get install -y cron curl unzip > /dev/null 2>&1
-sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade > /dev/null 2>&1
+sudo apt update > /dev/null
+sudo apt install snapd > /dev/null
+sudo snap install core > /dev/null
+sudo snap refresh core > /dev/null
+sudo apt install net-tools > /dev/null
+sudo apt-get install -y cron curl unzip > /dev/null
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade > /dev/null
 ./spiner.sh "sleep 5" "..." "Update system and install build tools"
 
 # Create Config File
@@ -75,8 +75,8 @@ EOF
 ./spiner.sh "sleep 3" "..." "Create Config File"
 
 # Define Chain & Privkey for SSL
-cpath="/etc/letsencrypt/live/"$fqn"/fullchain.pem" > /dev/null 2>&1
-ppath="/etc/letsencrypt/live/"$fqn"/privkey.pem" > /dev/null 2>&1
+cpath="/etc/letsencrypt/live/"$fqn"/fullchain.pem" > /dev/null 
+ppath="/etc/letsencrypt/live/"$fqn"/privkey.pem" > /dev/null 
 sleep 1
 
 # Create & Setup Observe Script for Config files
