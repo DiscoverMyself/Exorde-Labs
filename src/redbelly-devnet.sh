@@ -15,8 +15,8 @@ clear
 sleep 1 && curl -s https://raw.githubusercontent.com/DiscoverMyself/Exorde-Labs/resources/src/logo.sh | bash && sleep 1
 
 # DNS & Port Configuration
-echo 'Fully Qualified Domain Name (FQDN). example => redbelly.qbnode.online or qbnode.online'
-read -r -p "Enter Your Domain Name without https:// :" fqn
+echo 'Fully Qualified Domain Name - FQDN. (example => redbelly.qbnode.online / qbnode.online)'
+read -r -p "Enter Your Domain Name (without https://) : " fqn
 sleep 0.5
 read -r -p "Enter Node ID - As Node Registration : " ID
 sleep 0.5
