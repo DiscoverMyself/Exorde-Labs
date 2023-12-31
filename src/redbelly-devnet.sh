@@ -45,7 +45,7 @@ sudo snap refresh core > /dev/null
 sudo apt install net-tools > /dev/null
 sudo apt-get install -y cron curl unzip > /dev/null
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade > /dev/null
-./spiner.sh "sleep 5" "..." "Update system and install build tools"
+./spinner.sh "sleep 5" "..." "Update system and install build tools"
 
 # Create Config File
 tee /root/config.yaml  > /dev/null << EOF
@@ -72,7 +72,7 @@ rpcPoolConfig:
   maxIdleCount: 1
   maxIdleTime: 30
 EOF
-./spiner.sh "sleep 3" "..." "Create Config File"
+./spinner.sh "sleep 3" "..." "Create Config File"
 
 # Define Chain & Privkey for SSL
 cpath="/etc/letsencrypt/live/"$fqn"/fullchain.pem" > /dev/null 
@@ -104,7 +104,7 @@ rm -f log
 ./binaries/rbbc run --datadir=rbn --consensus.dir=consensus --tls --consensus.tls --tls.cert=$cpath --tls.key=$ppath --http --http.addr=0.0.0.0 --http.corsdomain=* --http.vhosts=* --http.port=$rpcport --http.api eth,net,web3,rbn --ws --ws.addr=0.0.0.0 --ws.port=$wsport --ws.origins="*" --ws.api eth,net,web3,rbn --threshold=200 --timeout=500 --logging.level info --mode production --consensus.type dbft --config.file config.yaml --bootstrap.tries=10 --bootstrap.wait=10 --recovery.tries=10 --recovery.wait=10
 EOF
 
-./spiner.sh "sleep 5" "..." "Create & Setup Observe Script for Config files"
+./spinner.sh "sleep 5" "..." "Create & Setup Observe Script for Config files"
 
 
 # Create Main Script
@@ -121,14 +121,14 @@ mkdir -p logs
 nohup ./observe.sh > ./logs/rbbcLogs 2>&1 &
 EOF
 
-./spiner.sh "sleep 5" "..." "Create Main Script & Logs file"
+./spinner.sh "sleep 5" "..." "Create Main Script & Logs file"
 
 chmod +x observe.sh > /dev/null
 chmod +x start-rbn.sh > /dev/null
 
 # Start The Node
 ./start-rbn.sh > /dev/null
-./spiner.sh "sleep 10" "..." "Running the Node"
+./spinner.sh "sleep 10" "..." "Running the Node"
 
 # Result
 echo '=============================== ALL SET !!! ==============================='
