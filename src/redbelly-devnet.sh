@@ -135,7 +135,7 @@ echo '=============================== ALL SET !!! ==============================
 echo -e "\e[1;32m Check your node status: \e[0m\e[1;36m${CYAN} pgrep rbbc ${NC}\e[0m"
 echo -e "\e[1;32m Check your nodelogs  : \e[0m\e[1;36m${CYAN} cat ./logs/rbbcLogs ${NC}\e[0m"
 echo '======================== THANK FOR YOUR SUPPORT ==========================='
-echo -e '===============' "\e[0m\e[1;35m Join Our TG Channel: @HappyCuanAirdrop \e[0m" '=================='
+echo -e '===============' "\e[0m\e[1;35m Support Us! => contact@quadblock.net \e[0m" '=================='
 
 
 
