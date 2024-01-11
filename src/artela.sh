@@ -28,7 +28,7 @@ read -r -p "Enter your custom Port (Default: 26): " PORT
 sleep 0.5
 
 # Update system and install build tools
-echo 'Installing prerequisites. take your cofee while waiting...'
+echo 'Installing prerequisites. take your coffee while waiting...'
 sudo apt update > /dev/null 2>&1
 sudo apt-get install git curl build-essential make jq gcc snapd chrony lz4 tmux unzip bc -y > /dev/null 2>&1
 
@@ -41,8 +41,8 @@ rm -rf sh-spinner > /dev/null 2>&1
 rm -rf artela > /dev/null 2>&1
 git clone https://github.com/artela-network/artela > /dev/null 2>&1
 cd $HOME/artela && git checkout v0.4.7-rc4 && make install > /dev/null 2>&1
-curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json > /dev/null 2>&1
-curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json > /dev/null 2>&1
+curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json > /dev/null
+curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json > /dev/null
 ./spinner.sh "sleep 5" "..." "Download Binaries, Genesis & Addrbook"
 
 #Initialize node
