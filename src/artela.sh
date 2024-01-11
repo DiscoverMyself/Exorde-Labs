@@ -27,6 +27,10 @@ sleep 0.5
 read -r -p "Enter your custom Port (Default: 26): " PORT
 sleep 0.5
 
+# Update system and install build tools
+sudo apt update > /dev/null 2>&1
+sudo apt-get install git curl build-essential make jq gcc snapd chrony lz4 tmux unzip bc -y > /dev/null 2>&1
+
 # Download Binaries, Genesis & Loader
 cd $HOME > /dev/null 2>&1
 git clone https://github.com/DiscoverMyself/sh-spinner > /dev/null 2>&1
@@ -42,10 +46,7 @@ curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/
 curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json > /dev/null 2>&1
 ./spinner.sh "sleep 5" "..." "Download Binaries, Genesis & Addrbook"
 
-# Update system and install build tools
-sudo apt update > /dev/null 2>&1
-sudo apt-get install git curl build-essential make jq gcc snapd chrony lz4 tmux unzip bc -y > /dev/null 2>&1
-./spinner.sh "sleep 5" "..." "Update system and install build tools"
+
 
 #Initialize node
 artelad config chain-id artela_11822-1 > /dev/null 2>&1
