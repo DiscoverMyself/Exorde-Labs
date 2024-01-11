@@ -41,8 +41,8 @@ rm -rf sh-spinner > /dev/null 2>&1
 rm -rf artela > /dev/null 2>&1
 git clone https://github.com/artela-network/artela > /dev/null 2>&1
 cd $HOME/artela && git checkout v0.4.7-rc4 && make install > /dev/null 2>&1
-curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json > /dev/null
-curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json > /dev/null
+curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json
+curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json
 ./spinner.sh "sleep 5" "..." "Download Binaries, Genesis & Addrbook"
 
 #Initialize node
