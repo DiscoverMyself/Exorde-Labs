@@ -53,8 +53,8 @@ artelad init $nodename --chain-id artela_11822-1 > /dev/null 2>&1
 $HOME/spinner.sh "sleep 5" "..." "Initialize your node"
 
 # Download Genesis & Addrbook file
-curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json > /dev/null 
-curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json > /dev/null
+curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json
+curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json
 $HOME/spinner.sh "sleep 3" "..." "Download Genesis & Addrbook file"
 
 # Create Config File
@@ -111,7 +111,7 @@ $HOME/spinner.sh "sleep 10" "..." "Running the Node"
 # Result
 echo '=============================== ALL SET !!! ==============================='
 echo -e "\e[1;32m Check your node status: \e[0m\e[1;36m${CYAN} systemctl status artelad ${NC}\e[0m"
-echo -e "\e[1;32m Check your nodelogs  : \e[0m\e[1;36m${CYAN} journalctl -fu artelad -o ${NC}\e[0m"
-echo -e "\e[1;32m Check your nodelogs  : \e[0m\e[1;36m${CYAN} artelad status 2>&1 | jq .SyncInfo ${NC}\e[0m"
+echo -e "\e[1;32m Check your nodelogs: \e[0m\e[1;36m${CYAN} journalctl -fu artelad -o ${NC}\e[0m"
+echo -e "\e[1;32m Check your synchronize status: \e[0m\e[1;36m${CYAN} artelad status 2>&1 | jq .SyncInfo ${NC}\e[0m"
 echo '======================== THANK FOR YOUR SUPPORT ==========================='
 echo -e '===============' "\e[0m\e[1;35m Join our TG: https://t.me/HappyCuanAirdrop \e[0m" '=================='
