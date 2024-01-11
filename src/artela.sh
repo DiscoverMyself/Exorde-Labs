@@ -6,14 +6,14 @@ exists()
 if exists go; then
 echo ''
 else
-  sudo curl https://dl.google.com/go/go1.20.5.linux-amd64.tar.gz | sudo tar -C/usr/local -zxvf - > /dev/null
-  cat <<'EOF' >>$HOME/.profile
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export GO111MODULE=on
-export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
-EOF
-source $HOME/.profile > /dev/null
+ver="1.20.5" > /dev/null 2>&1
+cd $HOME
+wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz" > /dev/null 2>&1
+sudo rm -rf /usr/local/go > /dev/null 2>&1
+sudo tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz" > /dev/null 2>&1
+rm "go$ver.linux-amd64.tar.gz" > /dev/null 2>&1
+echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile
+source ~/.bash_profile > /dev/null 2>&1
 fi
 
 clear
@@ -40,20 +40,16 @@ chmod +x spinner.sh > /dev/null 2>&1
 rm -rf sh-spinner > /dev/null 2>&1
 rm -rf artela > /dev/null 2>&1
 git clone https://github.com/artela-network/artela > /dev/null 2>&1
-cd $HOME/artela
-git checkout v0.4.7-rc4 > /dev/null 2>&1
-make install > /dev/null 2>&1
+cd $HOME/artela && git checkout v0.4.7-rc4 && make install > /dev/null 2>&1
 curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json > /dev/null 2>&1
 curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json > /dev/null 2>&1
 ./spinner.sh "sleep 5" "..." "Download Binaries, Genesis & Addrbook"
 
-
-
 #Initialize node
-artelad config chain-id artela_11822-1 > /dev/null 2>&1
-artelad config keyring-backend test > /dev/null 2>&1
-artelad config node tcp://localhost:${PORT}657 > /dev/null 2>&1
-artelad init $nodename --chain-id artela_11822-1 > /dev/null 2>&1
+artelad config chain-id artela_11822-1 > /dev/null
+artelad config keyring-backend test > /dev/null
+artelad config node tcp://localhost:${PORT}657 > /dev/null
+artelad init $nodename --chain-id artela_11822-1 > /dev/null
 ./spinner.sh "sleep 5" "..." "Initialize your node"
 
 # Create Config File
