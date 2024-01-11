@@ -32,7 +32,7 @@ echo 'Installing prerequisites. take your coffee while waiting...'
 sudo apt update > /dev/null 2>&1
 sudo apt-get install git curl build-essential make jq gcc snapd chrony lz4 tmux unzip bc -y > /dev/null 2>&1
 
-# Download Binaries, Genesis & Loader
+# Download Binaries, and generate config file
 cd $HOME > /dev/null 2>&1
 git clone https://github.com/DiscoverMyself/sh-spinner > /dev/null 2>&1
 mv $HOME/sh-spinner/spinner.sh $HOME/ > /dev/null 2>&1
@@ -41,8 +41,6 @@ rm -rf sh-spinner > /dev/null 2>&1
 rm -rf artela > /dev/null 2>&1
 git clone https://github.com/artela-network/artela > /dev/null 2>&1
 cd $HOME/artela && git checkout v0.4.7-rc4 && make install > /dev/null 2>&1
-curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json
-curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json
 ./spinner.sh "sleep 5" "..." "Download Binaries, Genesis & Addrbook"
 
 #Initialize node
@@ -51,6 +49,11 @@ artelad config keyring-backend test > /dev/null
 artelad config node tcp://localhost:${PORT}657 > /dev/null
 artelad init $nodename --chain-id artela_11822-1 > /dev/null
 ./spinner.sh "sleep 5" "..." "Initialize your node"
+
+# Download Genesis & Addrbook file
+curl -Ls https://ss-t.artela.nodestake.org/genesis.json > $HOME/.artelad/config/genesis.json > /dev/null
+curl -Ls https://ss-t.artela.nodestake.org/addrbook.json > $HOME/.artelad/config/addrbook.json > /dev/null
+./spinner.sh "sleep 3" "..." "Download Genesis & Addrbook file"
 
 # Create Config File
 sudo tee /etc/systemd/system/artelad.service > /dev/null
