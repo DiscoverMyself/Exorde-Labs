@@ -114,4 +114,4 @@ echo -e "\e[1;32m Check your node status: \e[0m\e[1;36m${CYAN} systemctl status 
 echo -e "\e[1;32m Check your nodelogs: \e[0m\e[1;36m${CYAN} journalctl -fu artelad -o cat${NC}\e[0m"
 echo -e "\e[1;32m Check your synchronize status: \e[0m\e[1;36m${CYAN} artelad status 2>&1 | jq .SyncInfo ${NC}\e[0m"
 echo '======================== THANK FOR YOUR SUPPORT ==========================='
-echo -e '===============' "\e[0m\e[1;35m Join our TG: ${tput smul}https://t.me/HappyCuanAirdrop${tput rmul}\e[0m" '=================='
+echo -e '===============' "\e[0m\e[1;35m Join our TG: $(tput smul)https://t.me/HappyCuanAirdrop$(tput rmul)\e[0m" '=================='
